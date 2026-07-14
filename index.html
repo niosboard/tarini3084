@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarini · Student Dashboard</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        body {
+            background: #f4f7fc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            padding: 30px 35px;
+            position: relative;
+            transition: 0.2s;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+            position: relative;
+        }
+        .logo-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+        .logo-top img {
+            max-height: 150px;
+            width: auto;
+            object-fit: contain;
+        }
+        .logo-placeholder {
+            background: #1e2a3a;
+            color: white;
+            font-weight: 600;
+            padding: 18px 40px;
+            border-radius: 60px;
+            letter-spacing: 1px;
+            font-size: 1.8rem;
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .profile-photo-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .profile-photo {
+            flex-shrink: 0;
+            display: none;
+        }
+        .profile-photo img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #e9edf4;
+            background: #f0f4fa;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+            display: block;
+        }
+        .profile-photo.visible {
+            display: block;
+        }
+        .photo-fallback {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #d0dae8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2a3a50;
+            font-size: 2rem;
+            border: 3px solid #e9edf4;
+        }
+        .photo-warning {
+            font-size: 0.65rem;
+            color: #000000;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 4px;
+            max-width: 120px;
+            line-height: 1.2;
+            display: none;
+        }
+        .photo-warning.visible {
+            display: block;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1.5px solid #d0d8e4;
+            color: #3a4a5e;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+            display: none;
+            white-space: nowrap;
+        }
+        .logout-btn:hover {
+            background: #f0f4fa;
+            border-color: #b0bccd;
+            color: #1e2a3a;
+        }
+        .logout-btn.visible {
+            display: inline-block;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 25px 30px;
+            margin: 10px 0 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid #e9edf4;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 20px 30px;
+        }
+        .login-field {
+            display: flex;
+            flex-direction: column;
+            flex: 1 0 180px;
+            position: relative;
+        }
+        .login-field label {
+            font-weight: 600;
+            color: #1e2a3a;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+            margin-bottom: 6px;
+        }
+        .login-field input {
+            padding: 12px 16px;
+            border: 1px solid #d9e0e8;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            background: #fafcff;
+            transition: 0.15s;
+            width: 100%;
+            padding-right: 46px;
+        }
+        .login-field input:focus {
+            border-color: #2a6df4;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(42, 109, 244, 0.15);
+        }
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            bottom: 12px;
+            cursor: pointer;
+            color: #6b7f96;
+            font-size: 1.1rem;
+            transition: 0.15s;
+            background: transparent;
+            border: none;
+            padding: 4px 6px;
+            border-radius: 30px;
+            z-index: 2;
+        }
+        .password-toggle:hover {
+            color: #1e2a3a;
+        }
+
+        .login-btn {
+            background: #1e2a3a;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 12px 34px;
+            border-radius: 40px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.15s;
+            letter-spacing: 0.3px;
+            margin-left: auto;
+            border: 1px solid #1e2a3a;
+        }
+        .login-btn:hover {
+            background: #2a3a50;
+            transform: scale(1.01);
+        }
+        .login-error {
+            color: #c72a2a;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .logged-in-section {
+            display: none;
+            margin-top: 10px;
+        }
+        .profile-card {
+            background: #f9fbfe;
+            border-radius: 28px;
+            padding: 22px 28px;
+            border: 1px solid #eef2f8;
+            margin-bottom: 30px;
+        }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px 20px;
+        }
+        .profile-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-item .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #5e6f88;
+            font-weight: 600;
+        }
+        .profile-item .value {
+            font-weight: 500;
+            color: #0f1a2b;
+            word-break: break-word;
+        }
+        .age-highlight {
+            background: #e3edfb;
+            padding: 4px 12px;
+            border-radius: 40px;
+            display: inline-block;
+            font-weight: 600;
+            color: #0047b3;
+        }
+        .subject-badge {
+            display: inline-block;
+            background: #eef3fc;
+            padding: 5px 14px;
+            border-radius: 30px;
+            margin-right: 8px;
+            margin-top: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 2px solid transparent;
+        }
+        .subject-badge:hover {
+            background: #dce6f5;
+            transform: scale(1.02);
+        }
+        .subject-badge.active {
+            border-color: #1a73e8;
+            background: #d4e2fc;
+        }
+        .subject-badge-all {
+            background: #1e2a3a;
+            color: white;
+            border: 2px solid #1e2a3a;
+        }
+        .subject-badge-all:hover {
+            background: #2a3a50;
+        }
+        .subject-badge-all.active {
+            border-color: #1a73e8;
+            background: #1e2a3a;
+        }
+
+        .status-section {
+            margin: 20px 0 25px 0;
+        }
+        .status-section h3 {
+            font-weight: 600;
+            color: #1a2a3a;
+            margin-bottom: 14px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        /* Subject Tabs */
+        .subject-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e9edf4;
+            padding-bottom: 8px;
+        }
+        .subject-tab {
+            padding: 6px 18px;
+            border-radius: 30px;
+            border: 1.5px solid #dce4ed;
+            background: white;
+            color: #3a4a5e;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .subject-tab:hover {
+            background: #f0f4fa;
+            border-color: #b0bccd;
+        }
+        .subject-tab.active {
+            background: #1a73e8;
+            color: white;
+            border-color: #1a73e8;
+        }
+        .subject-tab i {
+            margin-right: 4px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .filter-btn {
+            padding: 4px 14px;
+            border-radius: 30px;
+            border: 1.5px solid #dce4ed;
+            background: white;
+            color: #3a4a5e;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .filter-btn:hover {
+            background: #f0f4fa;
+            border-color: #b0bccd;
+        }
+        .filter-btn.active {
+            background: #1a73e8;
+            color: white;
+            border-color: #1a73e8;
+        }
+        .filter-btn i {
+            margin-right: 4px;
+        }
+
+        /* Date Filter */
+        .date-filter-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            padding: 10px 14px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e9edf4;
+        }
+        .date-filter-container label {
+            font-weight: 600;
+            color: #1a2a3a;
+            font-size: 0.85rem;
+        }
+        .date-filter-container input[type="date"] {
+            padding: 6px 12px;
+            border: 1px solid #d4dce6;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            background: white;
+            color: #1a2a3a;
+        }
+        .date-filter-container input[type="date"]:focus {
+            border-color: #1a73e8;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.15);
+        }
+        .date-filter-btn {
+            padding: 6px 18px;
+            border-radius: 30px;
+            border: none;
+            background: #1a73e8;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .date-filter-btn:hover {
+            background: #1557b0;
+        }
+        .date-filter-btn.reset-btn {
+            background: #e8e8e8;
+            color: #3a4a5e;
+        }
+        .date-filter-btn.reset-btn:hover {
+            background: #d0d0d0;
+        }
+
+        .status-table-wrap {
+            overflow: auto;
+            border-radius: 16px;
+            border: 1px solid #e9edf4;
+            background: white;
+            max-height: 800px;
+        }
+        .status-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 1300px;
+        }
+        .status-table th {
+            background: #f2f6fc;
+            color: #1a2a3a;
+            font-weight: 600;
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 2px solid #dce4ed;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .status-table td {
+            padding: 10px 10px;
+            border-bottom: 1px solid #eef2f8;
+            vertical-align: middle;
+        }
+        .status-table tr:last-child td {
+            border-bottom: none;
+        }
+        .status-table tr:hover td {
+            background: #fafcff;
+        }
+        .subject-name-cell {
+            font-weight: 600;
+            color: #1a2a3a;
+            white-space: nowrap;
+        }
+        .badge-status {
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .badge-status.pending {
+            background: #fef3d7;
+            color: #9d6f0a;
+        }
+        .badge-status.submitted {
+            background: #d4e6fc;
+            color: #1a5a8a;
+        }
+        .badge-status.rejected {
+            background: #fad5d5;
+            color: #a12b2b;
+        }
+        .badge-status.approved {
+            background: #c8f0d6;
+            color: #0c5e2a;
+        }
+        .badge-status.overdue {
+            background: #e0e0e0;
+            color: #666666;
+        }
+        .badge-status.marks {
+            background: #e8f0fe;
+            color: #1a3a6a;
+            font-weight: 700;
+        }
+        .badge-status.time-expired {
+            background: #fad5d5;
+            color: #a12b2b;
+        }
+        .badge-status.time-active {
+            background: #c8f0d6;
+            color: #0c5e2a;
+        }
+        .subject-action-btn {
+            background: #eef3fc;
+            border: none;
+            color: #1a3a6a;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+            white-space: nowrap;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .subject-action-btn:hover {
+            background: #dce6f5;
+        }
+        .subject-action-btn i {
+            font-size: 0.7rem;
+        }
+        .subject-action-btn.approved-btn {
+            background: #c8f0d6;
+            color: #0c5e2a;
+        }
+        .subject-action-btn.approved-btn:hover {
+            background: #b0e6c4;
+        }
+        .subject-action-btn.rejected-btn {
+            background: #fad5d5;
+            color: #a12b2b;
+        }
+        .subject-action-btn.rejected-btn:hover {
+            background: #f5c0c0;
+        }
+        .subject-action-btn.inactive {
+            background: #e8e8e8;
+            color: #888888;
+            cursor: not-allowed;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        .subject-action-btn.overdue-pay-btn {
+            background: #fef3d7;
+            color: #9d6f0a;
+            border: 2px solid #e6a817;
+            font-weight: 700;
+        }
+        .subject-action-btn.overdue-pay-btn:hover {
+            background: #fce8b8;
+            transform: scale(1.02);
+        }
+        .subject-action-btn.time-expired-btn {
+            background: #fad5d5;
+            color: #a12b2b;
+            border: 2px solid #c72a2a;
+            font-weight: 700;
+        }
+        .subject-action-btn.time-expired-btn:hover {
+            background: #f5c0c0;
+            transform: scale(1.02);
+        }
+        .subject-action-btn.active-time-btn {
+            background: #c8f0d6;
+            color: #0c5e2a;
+            border: 2px solid #27ae60;
+            font-weight: 700;
+        }
+        .subject-action-btn.active-time-btn:hover {
+            background: #b0e6c4;
+            transform: scale(1.02);
+        }
+        .marks-display {
+            font-weight: 600;
+            color: #0c5e2a;
+        }
+        .ref-link-btn {
+            background: #e8f0fe;
+            border: none;
+            color: #1a3a6a;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+            white-space: nowrap;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .ref-link-btn:hover {
+            background: #d4e2fc;
+        }
+        .ref-link-btn i {
+            font-size: 0.7rem;
+        }
+        .ref-link-btn.always-visible {
+            background: #d4edda;
+            color: #0c5e2a;
+            border: 1px solid #b8d4c0;
+        }
+        .ref-link-btn.always-visible:hover {
+            background: #c3e6cb;
+        }
+        .ref-link-btn.time-expired-ref {
+            background: #fad5d5;
+            color: #a12b2b;
+            border: 1px solid #c72a2a;
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .ref-link-btn.time-active-ref {
+            background: #c8f0d6;
+            color: #0c5e2a;
+            border: 1px solid #27ae60;
+        }
+        .ref-link-btn.time-active-ref:hover {
+            background: #b0e6c4;
+        }
+        .marks-column {
+            font-weight: 600;
+            color: #1a3a6a;
+            text-align: center;
+        }
+        .marks-column .scored {
+            color: #0c5e2a;
+        }
+        .marks-column .total {
+            color: #5a6f88;
+        }
+
+        .status-note {
+            background: #fff8e6;
+            border-left: 4px solid #e6a817;
+            padding: 14px 20px;
+            border-radius: 12px;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: #5a4a1a;
+        }
+        .status-note i {
+            color: #e6a817;
+            margin-right: 8px;
+        }
+        .status-note strong {
+            color: #b13a3a;
+        }
+
+        /* ===== TIMETABLE SECTION ===== */
+        .timetable-section {
+            margin: 30px 0 25px 0;
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 25px 28px;
+            border: 2px solid #e9edf4;
+        }
+        .timetable-section h3 {
+            font-weight: 700;
+            color: #1a2a3a;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .timetable-section h3 i {
+            color: #1a73e8;
+        }
+        .timetable-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .timetable-card {
+            background: white;
+            border-radius: 16px;
+            padding: 18px 20px;
+            border: 1px solid #e9edf4;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: 0.2s;
+        }
+        .timetable-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        .timetable-card .subject-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #eef2f8;
+        }
+        .timetable-card .subject-header .subject-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        .timetable-card .subject-header .subject-icon.english { background: #1a73e8; }
+        .timetable-card .subject-header .subject-icon.hindi { background: #e67e22; }
+        .timetable-card .subject-header .subject-icon.maths { background: #27ae60; }
+        .timetable-card .subject-header .subject-icon.science { background: #8e44ad; }
+        .timetable-card .subject-header .subject-icon.social-science { background: #e84393; }
+        .timetable-card .subject-header .subject-icon.pt { background: #00b894; }
+        .timetable-card .subject-header .subject-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1a2a3a;
+        }
+        .timetable-card .subject-header .subject-book {
+            font-size: 0.8rem;
+            color: #5a6f88;
+            font-weight: 500;
+        }
+        .timetable-card .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 0;
+            font-size: 0.85rem;
+            color: #2a3a50;
+        }
+        .timetable-card .schedule-item i {
+            width: 18px;
+            color: #5a6f88;
+            font-size: 0.8rem;
+        }
+        .timetable-card .schedule-item .day {
+            font-weight: 600;
+            min-width: 55px;
+            color: #1a2a3a;
+        }
+        .timetable-card .schedule-item .time {
+            color: #3a5a7a;
+            font-weight: 500;
+        }
+        .timetable-card .schedule-item .status-badge {
+            font-size: 0.6rem;
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-weight: 600;
+            margin-left: auto;
+        }
+        .timetable-card .schedule-item .status-badge.ongoing {
+            background: #c8f0d6;
+            color: #0c5e2a;
+        }
+        .timetable-card .schedule-item .status-badge.upcoming {
+            background: #fef3d7;
+            color: #9d6f0a;
+        }
+        .timetable-card .schedule-item .status-badge.completed {
+            background: #e0e0e0;
+            color: #666666;
+        }
+
+        /* Weekly Grid Timetable */
+        .weekly-timetable {
+            margin-top: 20px;
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 2px solid #e9edf4;
+            background: white;
+        }
+        .weekly-timetable table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            min-width: 700px;
+        }
+        .weekly-timetable th {
+            background: #1a2a3a;
+            color: white;
+            font-weight: 600;
+            padding: 12px 10px;
+            text-align: center;
+            border: 1px solid #2a3a50;
+        }
+        .weekly-timetable td {
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid #dce4ed;
+            vertical-align: middle;
+            min-height: 45px;
+        }
+        .weekly-timetable .time-col {
+            font-weight: 700;
+            color: #1a2a3a;
+            background: #f2f6fc;
+            min-width: 90px;
+        }
+        .weekly-timetable .subject-cell {
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 6px 4px;
+        }
+        .weekly-timetable .subject-cell.english { background: #d4e2fc; color: #1a4a8a; }
+        .weekly-timetable .subject-cell.hindi { background: #fdebd0; color: #a05a1a; }
+        .weekly-timetable .subject-cell.maths { background: #d5f5e3; color: #1a6a3a; }
+        .weekly-timetable .subject-cell.science { background: #e8d5f5; color: #6a2a8a; }
+        .weekly-timetable .subject-cell.social-science { background: #fce4ec; color: #8a2a5a; }
+        .weekly-timetable .subject-cell.pt { background: #d5f5f5; color: #1a6a6a; }
+        .weekly-timetable .subject-cell.break-cell { 
+            background: #f5f0e8; 
+            color: #7a5a2a;
+            font-weight: 600;
+        }
+        .weekly-timetable .subject-cell.lunch-cell {
+            background: #f0e8d8;
+            color: #7a5a2a;
+            font-weight: 700;
+        }
+        .weekly-timetable .subject-cell .sub-icon {
+            font-size: 0.7rem;
+            margin-right: 4px;
+        }
+        .weekly-timetable .subject-cell .sub-name {
+            font-size: 0.75rem;
+        }
+        @media (max-width: 600px) {
+            .weekly-timetable .subject-cell .sub-name {
+                font-size: 0.65rem;
+            }
+            .weekly-timetable td, .weekly-timetable th {
+                padding: 6px 4px;
+                font-size: 0.7rem;
+            }
+            .weekly-timetable .time-col {
+                min-width: 60px;
+                font-size: 0.7rem;
+            }
+        }
+
+        .submission-btn-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0 30px 0;
+        }
+        .start-submission-btn {
+            background: #1a73e8;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 16px 48px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #1a73e8;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        .start-submission-btn:hover {
+            background: #1557b0;
+            border-color: #1557b0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 115, 232, 0.35);
+        }
+        .start-submission-btn i {
+            font-size: 1.2rem;
+        }
+
+        .logo-bottom {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e3e9f2;
+        }
+        .logo-bottom img {
+            max-height: 130px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        @media (max-width: 650px) {
+            .container { padding: 16px; }
+            .login-btn { margin-left: 0; width: 100%; }
+            .top-bar { 
+                flex-direction: column; 
+                align-items: center;
+                position: relative;
+            }
+            .logo-top { 
+                flex: none; 
+                width: 100%;
+                justify-content: center;
+            }
+            .logo-top img {
+                max-height: 100px;
+            }
+            .top-right {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                margin-top: 8px;
+                justify-content: center;
+                width: 100%;
+                align-items: center;
+            }
+            .profile-photo img { width: 56px; height: 56px; }
+            .logout-btn { font-size: 0.75rem; padding: 6px 12px; }
+            .start-submission-btn { padding: 14px 28px; font-size: 1rem; width: 100%; justify-content: center; }
+            .submission-btn-wrapper { width: 100%; }
+            .logo-bottom img {
+                max-height: 90px;
+            }
+            .status-table { font-size: 0.7rem; min-width: 1000px; }
+            .status-table th, .status-table td { padding: 6px 8px; }
+            .photo-warning { max-width: 100px; font-size: 0.6rem; }
+            .subject-tab { font-size: 0.7rem; padding: 4px 12px; }
+            .filter-btn { font-size: 0.65rem; padding: 3px 10px; }
+            .date-filter-container { flex-direction: column; align-items: stretch; }
+            .date-filter-container input[type="date"] { width: 100%; }
+            .timetable-grid { grid-template-columns: 1fr; }
+            .timetable-section { padding: 16px; }
+            .weekly-timetable table { font-size: 0.65rem; min-width: 500px; }
+            .weekly-timetable td, .weekly-timetable th { padding: 4px 3px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="appContainer">
+
+    <div class="top-bar">
+        <div class="logo-top">
+            <img src="logo1.png" alt="Logo 1" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'logo-placeholder\'><i class=\'fas fa-graduation-cap\'></i> LOGO 1</span>';">
+        </div>
+        <div class="top-right">
+            <div class="profile-photo-wrapper">
+                <div class="profile-photo" id="profilePhotoContainer">
+                    <img src="photo.png" alt="Profile photo" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'photo-fallback\'><i class=\'fas fa-user-circle\'></i></div>';">
+                </div>
+                <div class="photo-warning" id="photoWarning">
+                    <i class="fas fa-check-circle"></i> Ref No: A0226201414
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <div class="login-card" id="loginPanel">
+        <div class="login-field">
+            <label><i class="fas fa-user"></i> Login ID</label>
+            <input type="text" id="loginId" placeholder="Enter Login ID" autocomplete="off">
+        </div>
+        <div class="login-field" id="passwordFieldWrapper">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <input type="password" id="loginPass" placeholder="Enter Password" autocomplete="off">
+            <button type="button" class="password-toggle" id="togglePasswordBtn" aria-label="Toggle password visibility">
+                <i class="fas fa-eye" id="eyeIcon"></i>
+            </button>
+        </div>
+        <button class="login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+        <div id="loginError" class="login-error"></div>
+    </div>
+
+    <div class="logged-in-section" id="loggedInContent">
+
+        <div class="profile-card">
+            <div class="profile-grid">
+                <div class="profile-item"><span class="label">Name</span><span class="value">Tarini Rupesh Vaidya</span></div>
+                <div class="profile-item"><span class="label">Date of Birth</span><span class="value">25th Feb 2012</span></div>
+                <div class="profile-item"><span class="label">Age (live)</span><span class="value age-highlight" id="ageDisplay">—</span></div>
+                <div class="profile-item"><span class="label">Permanent Address</span><span class="value">45/3 Narsinha Niwas, Dr. MB Raut Road Shivaji Park, Dadar West, Mumbai, Maharashatra, India 400028</span></div>
+                <div class="profile-item"><span class="label">Correspondence</span><span class="value">404 Marigold, Park Springs Society, Porwal Road, Lohegaon, Pune, Maharashatra, India411047</span></div>
+                <div class="profile-item"><span class="label">Registered Email</span><span class="value">vxxxx_xxxxsh@rexxxxxxil.com</span></div>
+                <div class="profile-item"><span class="label">Registered Contact</span><span class="value">+91 751xxxxxx8</span></div>
+                <div class="profile-item"><span class="label">Alternate Contact</span><span class="value">+91 950xxxxxx7</span></div>
+                <div class="profile-item"><span class="label">Aadhar Number</span><span class="value">XXXXXXXX3084</span></div>
+            </div>
+            <div style="margin-top: 12px;">
+                <span class="label">Subjects Selected</span>
+                <div id="subjectBadgesContainer">
+                    <span class="subject-badge subject-badge-all active" data-filter="all">All Subjects</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-section">
+            <h3>
+                <i class="fas fa-list-check"></i> Submission Status
+                <span style="font-size: 0.75rem; font-weight: 400; color: #5a6f88; margin-left: 8px;" id="filterLabel">(Showing: All)</span>
+            </h3>
+            
+            <!-- Subject Tabs -->
+            <div class="subject-tabs" id="subjectTabs">
+                <!-- Generated by JavaScript -->
+            </div>
+            
+            <!-- Date Filter -->
+            <div class="date-filter-container">
+                <label><i class="fas fa-calendar-alt"></i> Filter by Due Date:</label>
+                <input type="date" id="dateFilterFrom" placeholder="From">
+                <span style="color: #5a6f88;">to</span>
+                <input type="date" id="dateFilterTo" placeholder="To">
+                <button class="date-filter-btn" id="applyDateFilter"><i class="fas fa-filter"></i> Apply</button>
+                <button class="date-filter-btn reset-btn" id="resetDateFilter"><i class="fas fa-undo"></i> Reset</button>
+            </div>
+            
+            <!-- Submission Type Filter Buttons -->
+            <div class="filter-buttons" id="filterButtons">
+                <!-- Generated by JavaScript -->
+            </div>
+            
+            <div class="status-table-wrap">
+                <table class="status-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Book</th>
+                            <th>Exam Lesson</th>
+                            <th>TMA Lesson</th>
+                            <th>Type</th>
+                            <th>Due Date</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Total Marks</th>
+                            <th>Marks Gained</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                            <th>Reference</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statusTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="status-note">
+                <i class="fas fa-exclamation-circle"></i>
+                <strong>Warning:</strong> If submissions are not done regularly, your name will be cancelled and you will have to register for the next term.
+            </div>
+            
+            <div class="status-note">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Caution:</strong> We recommend not to connect or not to check AI platforms or and also not to check social media channels about portal as your login and password can be hacked.
+            </div>
+            
+            <div class="status-note">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Caution:</strong> NEVER EVER SHARE YOUR LOGIN ID OR PASSWORD OR THE LINK WITH ANY BODY WHO IS NOT THE MEMBER OF YOUR FAMILY.
+            </div>
+            
+            <div class="status-note">
+                <i class="fas fa-envelope-open-text"></i>
+                <div class="letter">
+                    <div style="text-align:right;">
+                        <strong>Date:</strong> 13 July 2026
+                    </div>
+                    <br>
+                    <p><strong>To,</strong><br>
+                    <br>
+                    Tarini Rupesh Vaidya</p>
+                    <br>
+                    <p><strong>Subject:</strong> Admission Registration for Regular Documents Upload</p>
+                    <br>
+                    <p><strong>WELCOME TO THE REGULAR SUBMISSION AND LEARNING PROGRAM</strong>. </p>
+                    <br>
+                    <p>
+                        This is to confirm that your admission registration for Regular Study Documents Upload 
+                        to the <strong>Stream I Block I Secondary Course (Class X) April 2027</strong> has been <strong>registered on 13 July 2026 with Ref No: A0226201414 </strong>.
+                    </p>
+                    <br>  
+                    <p>
+                        You will receive your Enrollment Number after the verification process is completed. 
+                        Kindly do not contact the Study Centre or our office again and again regarding its issuance, 
+                        as it will be shared with you once available.
+                         <strong>Repeated enquiries may lead to your application being removed from the processing list. </strong>.
+                    </p>
+
+                    <br>
+                    
+                    <p>
+                        We encourage you to stay consistent with your studies and tell your parents to regularly check both the Login Portals. This student portal has to be checked regularly by Students and doubts can be asked to parents.
+                        for updates on examination schedules and other important notifications. Everytime you check the portal you must take permission from your parents.
+                    </p>
+                    <br>
+                    
+                    <p>
+                        If you need assistance you can use the videos in the website or you can also take help of AI platforms or Social medial education channels also 
+                        but as per your discretion. 
+                        <strong>We do not stop you from refering any material which will help you enhance your knowledge.</strong>
+                    </p>
+                    
+                    
+                    <br>
+                    <p>
+                        Please visit the other portals for complete guidelines, 
+                        Board examination schedules, TMA submissions, and other important information.
+                    </p>
+                    <br>
+                    <p>
+                        As this is home schooling, Home is your School so you have to behave with good conduct in your home. <strong>Any misconduct is not allowed at all. </strong> 
+                        Any complaint from the Parents will be taken seriously as in home your Parent are your Teachers.
+                    </p>
+                    <br>
+                            
+                    <p>Yours faithfully,</p>
+                    <p>
+                    <br>
+                        <strong>Admissions Department</strong><br>
+                        National Institute of Open Schooling (NIOS)
+                    </p>
+                    <br>
+                    <p>
+                        <strong>Notice:</strong> This portal is exclusively for submitting Tests regularly. 
+                        For TMA submissions, please use the other portal. And For PCP you need to visit the Allocated Study Centre after your receive the Enrollment Number.
+                    </p>
+                    <br>
+                    
+                    <br>
+                    <p>
+                        <strong>Any updates in the above information will be share and the above letter can be cha</strong> 
+                    </p>
+                    <br>
+                    
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TIMETABLE SECTION ===== -->
+        <div class="timetable-section" id="timetableSection">
+            <h3>
+                <i class="fas fa-clock"></i> Weekly Class Schedule (Mon-Fri)
+                <span style="font-size: 0.75rem; font-weight: 400; color: #5a6f88; margin-left: 8px;">9:30 AM - 5:30 PM</span>
+            </h3>
+            
+            <!-- Weekly Grid Timetable -->
+            <div class="weekly-timetable" id="weeklyTimetable">
+                <!-- Generated by JavaScript -->
+            </div>
+            
+            <!-- Subject Cards -->
+            <div style="margin-top: 25px;">
+                <h4 style="color: #1a2a3a; margin-bottom: 12px; font-size: 1rem;">
+                    <i class="fas fa-book-open"></i> Subject-wise Schedule
+                </h4>
+                <div class="timetable-grid" id="timetableGrid">
+                    <!-- Generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div class="submission-btn-wrapper">
+            <a href="https://sdmis.nios.ac.in/registration/home-notifications" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="start-submission-btn">
+                <i class="fas fa-pen-to-square"></i> Notifications
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="logo-bottom">
+            <img src="logo2.png" alt="Logo 2" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'logo-placeholder\' style=\'background:#3a4a5e;\'><i class=\'fas fa-school\'></i> LOGO 2</span>';">
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ================================================================
+        // CONFIGURATION
+        // ================================================================
+        const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScXgJeruLzVbYy6Ek8mUujjCF4lLiZXp8wa19YOYXYVHeLkcw/viewform?usp=header';
+        const OVERDUE_PAYMENT_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdV2nE5WTU3MOwkj5ts7sKhc7yJTS6FhzXn9b1G6IT3b25PgQ/viewform?usp=header';
+        const DEFAULT_DRIVE_LINK = 'https://nios.ac.in/online-course-material/secondary-courses.aspx';
+
+        // ================================================================
+        // FULL TABLE DATA - WITH examLesson and tmaLesson
+        // ================================================================
+        const tableData = [
+    // English(202) Back Q & A
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '', tmaLesson: 'None', submissionType: 'Back Q & A', dueDate: '2026-07-20', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '69', tmaLesson: '136', submissionType: 'Back Q & A', dueDate: '2026-09-07', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '137', tmaLesson: '202', submissionType: 'Back Q & A', dueDate: '2026-11-09', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '203', tmaLesson: '258', submissionType: 'Back Q & A', dueDate: '2027-02-08', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // English(202) Doubts    
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '1', tmaLesson: '68', submissionType: 'Doubts', dueDate: '2026-07-15', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '69', tmaLesson: '136', submissionType: 'Doubts', dueDate: '2026-09-03', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '137', tmaLesson: '202', submissionType: 'Doubts', dueDate: '2027-11-05', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '203', tmaLesson: '258', submissionType: 'Doubts', dueDate: '2027-02-04', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+                            
+    // English(202) Work sheet        
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '1', tmaLesson: '68', submissionType: 'Work Sheet', dueDate: '2026-07-18', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '69', tmaLesson: '136', submissionType: 'Work Sheet', dueDate: '2026-09-25', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '137', tmaLesson: '202', submissionType: 'Work Sheet', dueDate: '2026-09-18', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '203', tmaLesson: '258', submissionType: 'Work Sheet', dueDate: '2026-09-25', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // Weekly Test - with time slots
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: 'L1, L3, L5, L6, L8, L9', tmaLesson: 'None', submissionType: 'Weekly Test', dueDate: '2026-07-20', status: 'pending', driveLink: '', refLink: '', startTime: '10:30', endTime: '12:30', totalMarks: '40', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '33', tmaLesson: '68', submissionType: 'Weekly Test', dueDate: '2026-08-09', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '15' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '1', tmaLesson: '68', submissionType: 'Weekly Test', dueDate: '2026-08-15', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },           
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '69', tmaLesson: '96', submissionType: 'Weekly Test', dueDate: '2026-08-22', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '8' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '97', tmaLesson: '136', submissionType: 'Weekly Test', dueDate: '2026-08-29', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '18' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '137', tmaLesson: '168', submissionType: 'Weekly Test', dueDate: '2026-09-05', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '169', tmaLesson: '202', submissionType: 'Weekly Test', dueDate: '2026-09-12', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '137', tmaLesson: '202', submissionType: 'Weekly Test', dueDate: '2026-09-19', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },            
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '203', tmaLesson: '230', submissionType: 'Weekly Test', dueDate: '2027-01-05', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '231', tmaLesson: '258', submissionType: 'Weekly Test', dueDate: '2027-01-12', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+
+    // Project
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '1', tmaLesson: '136', submissionType: 'Project', dueDate: '2026-09-05', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '137', tmaLesson: '258', submissionType: 'Project', dueDate: '2027-02-05', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // UT I - with time slots
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '1', tmaLesson: '68', submissionType: 'Aug 26 UT I', dueDate: '2026-08-20', status: 'pendings', driveLink: '', refLink: '', startTime: '11:00', endTime: '12:00', totalMarks: '40', marksGained: '' },
+    // Term I - with time slots
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '1', tmaLesson: '136', submissionType: 'Oct 26 Term I', dueDate: '2026-10-20', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '12:00', totalMarks: '80', marksGained: '65' },
+    // Prelims I - with time slots
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '137', tmaLesson: '202', submissionType: 'Jan 27 Prelims I', dueDate: '2027-01-20', status: 'pendings', driveLink: '', refLink: '', startTime: '11:00', endTime: '12:00', totalMarks: '40', marksGained: '' },
+    // Term II - with time slots
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '137', tmaLesson: '258', submissionType: 'Feb 27 Prelims II', dueDate: '2027-03-20', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '12:00', totalMarks: '80', marksGained: '' },
+
+    // Hindi (201)
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '61', submissionType: 'Back Q & A', dueDate: '2026-07-20', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '62', tmaLesson: '119', submissionType: 'Back Q & A', dueDate: '2026-09-07', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '120', tmaLesson: '165', submissionType: 'Back Q & A', dueDate: '2026-11-09', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '166', tmaLesson: '206', submissionType: 'Back Q & A', dueDate: '2027-02-08', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // Hindi (201) Doubts    
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '61', submissionType: 'Doubts', dueDate: '2026-07-15', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '62', tmaLesson: '119', submissionType: 'Doubts', dueDate: '2026-09-03', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '120', tmaLesson: '165', submissionType: 'Doubts', dueDate: '2027-11-05', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '166', tmaLesson: '206', submissionType: 'Doubts', dueDate: '2027-02-04', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+                            
+    // Hindi (201) Work sheet        
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '61', submissionType: 'Work Sheet', dueDate: '2026-07-18', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '62', tmaLesson: '119', submissionType: 'Work Sheet', dueDate: '2026-07-25', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '120', tmaLesson: '165', submissionType: 'Work Sheet', dueDate: '2026-09-18', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '166', tmaLesson: '206', submissionType: 'Work Sheet', dueDate: '2026-09-25', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // Weekly Test - with time slots
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '44', submissionType: 'Weekly Test', dueDate: '2026-07-19', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '45', tmaLesson: '61', submissionType: 'Weekly Test', dueDate: '2026-08-09', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '19' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '61', submissionType: 'Weekly Test', dueDate: '2026-08-16', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '62', tmaLesson: '83', submissionType: 'Weekly Test', dueDate: '2026-08-23', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '84', tmaLesson: '119', submissionType: 'Weekly Test', dueDate: '2026-08-30', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '120', tmaLesson: '152', submissionType: 'Weekly Test', dueDate: '2026-09-06', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '153', tmaLesson: '165', submissionType: 'Weekly Test', dueDate: '2026-09-13', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '120', tmaLesson: '165', submissionType: 'Weekly Test', dueDate: '2026-09-20', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '166', tmaLesson: '175', submissionType: 'Weekly Test', dueDate: '2027-01-06', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '176', tmaLesson: '206', submissionType: 'Weekly Test', dueDate: '2027-01-13', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+
+    // Project
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '119', submissionType: 'Project', dueDate: '2026-09-07', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '120', tmaLesson: '206', submissionType: 'Project', dueDate: '2027-02-08', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // UT I - with time slots
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '61', submissionType: 'Aug 26 UT I', dueDate: '2026-08-22', status: 'pendings', driveLink: '', refLink: '', startTime: '11:00', endTime: '12:00', totalMarks: '40', marksGained: '12' },
+    // Term I - with time slots
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '119', submissionType: 'Oct 26 Term I', dueDate: '2026-10-22', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '12:00', totalMarks: '80', marksGained: '' },
+    // Prelims I - with time slots
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '120', tmaLesson: '165', submissionType: 'Jan 27 Prelims I', dueDate: '2027-01-22', status: 'pendings', driveLink: '', refLink: '', startTime: '11:00', endTime: '12:00', totalMarks: '40', marksGained: '' },
+    // Term II - with time slots
+    { subject: 'Hindi (201)', book: 'NIOS Secondary Course', examLesson: '120', tmaLesson: '206', submissionType: 'Feb 27 Prelims II', dueDate: '2027-03-22', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '12:00', totalMarks: '80', marksGained: '' },
+
+    // Mathematics (211)
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '40', submissionType: 'Back Q & A', dueDate: '2026-07-27', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '41', tmaLesson: '91', submissionType: 'Back Q & A', dueDate: '2026-09-14', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '92', tmaLesson: '154', submissionType: 'Back Q & A', dueDate: '2026-11-16', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '155', tmaLesson: '200', submissionType: 'Back Q & A', dueDate: '2027-02-15', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // Mathematics (211) Doubts    
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '40', submissionType: 'Doubts', dueDate: '2026-07-22', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '41', tmaLesson: '91', submissionType: 'Doubts', dueDate: '2026-09-10', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '92', tmaLesson: '154', submissionType: 'Doubts', dueDate: '2027-11-12', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '155', tmaLesson: '200', submissionType: 'Doubts', dueDate: '2027-02-11', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+                            
+    // Mathematics (211) Work sheet        
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '40', submissionType: 'Work Sheet', dueDate: '2026-07-18', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '41', tmaLesson: '91', submissionType: 'Work Sheet', dueDate: '2026-07-25', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '92', tmaLesson: '154', submissionType: 'Work Sheet', dueDate: '2026-09-18', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '155', tmaLesson: '200', submissionType: 'Work Sheet', dueDate: '2026-09-25', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // Weekly Test - with time slots
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: 'L4, L5, L6, L7', tmaLesson: 'None', submissionType: 'Weekly Test', dueDate: '2026-07-28', status: 'pending', driveLink: '', refLink: '', startTime: '10:30', endTime: '12:30', totalMarks: '40', marksGained: '14' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '16', tmaLesson: '40', submissionType: 'Weekly Test', dueDate: '2026-08-09', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '40', submissionType: 'Weekly Test', dueDate: '2026-08-16', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },            
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '41', tmaLesson: '67', submissionType: 'Weekly Test', dueDate: '2026-08-23', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '68', tmaLesson: '91', submissionType: 'Weekly Test', dueDate: '2026-08-30', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '92', tmaLesson: '117', submissionType: 'Weekly Test', dueDate: '2026-09-06', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '118', tmaLesson: '154', submissionType: 'Weekly Test', dueDate: '2026-09-13', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '92', tmaLesson: '154', submissionType: 'Weekly Test', dueDate: '2026-09-20', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '155', tmaLesson: '173', submissionType: 'Weekly Test', dueDate: '2027-01-06', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '174', tmaLesson: '200', submissionType: 'Weekly Test', dueDate: '2027-01-13', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+
+    // Project
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '91', submissionType: 'Project', dueDate: '2026-09-09', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '92', tmaLesson: '200', submissionType: 'Project', dueDate: '2027-02-09', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // UT I - with time slots
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '40', submissionType: 'Aug 26 UT I', dueDate: '2026-08-24', status: 'pendings', driveLink: '', refLink: '', startTime: '11:00', endTime: '12:00', totalMarks: '40', marksGained: '' },
+    // Term I - with time slots
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '91', submissionType: 'Oct 26 Term I', dueDate: '2026-10-24', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '12:00', totalMarks: '80', marksGained: '' },
+    // Prelims I - with time slots
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '92', tmaLesson: '154', submissionType: 'Jan 27 Prelims I', dueDate: '2027-01-25', status: 'pendings', driveLink: '', refLink: '', startTime: '11:00', endTime: '12:00', totalMarks: '40', marksGained: '' },
+    // Term II - with time slots
+    { subject: 'Mathematics (211)', book: 'NIOS Secondary Course', examLesson: '92', tmaLesson: '200', submissionType: 'Feb 27 Prelims II', dueDate: '2027-03-24', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '12:00', totalMarks: '80', marksGained: '' },
+
+    // Science and Technology (212)
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '47', submissionType: 'Back Q & A', dueDate: '2026-07-27', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '48', tmaLesson: '139', submissionType: 'Back Q & A', dueDate: '2026-09-14', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '140', tmaLesson: '207', submissionType: 'Back Q & A', dueDate: '2026-11-16', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '208', tmaLesson: '272', submissionType: 'Back Q & A', dueDate: '2027-02-15', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // Science and Technology (212) Doubts    
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '47', submissionType: 'Doubts', dueDate: '2026-07-22', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '48', tmaLesson: '139', submissionType: 'Doubts', dueDate: '2026-09-10', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '140', tmaLesson: '207', submissionType: 'Doubts', dueDate: '2027-11-12', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '208', tmaLesson: '272', submissionType: 'Doubts', dueDate: '2027-02-11', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+                            
+    // Science and Technology (212) Work sheet        
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '47', submissionType: 'Work Sheet', dueDate: '2026-07-18', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '48', tmaLesson: '139', submissionType: 'Work Sheet', dueDate: '2026-07-25', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '140', tmaLesson: '207', submissionType: 'Work Sheet', dueDate: '2026-09-18', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '208', tmaLesson: '272', submissionType: 'Work Sheet', dueDate: '2026-09-25', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // Weekly Test - with time slots
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '27', submissionType: 'Weekly Test', dueDate: '2026-07-19', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '17' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '28', tmaLesson: '47', submissionType: 'Weekly Test', dueDate: '2026-08-09', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '6' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '47', submissionType: 'Weekly Test', dueDate: '2026-08-16', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },            
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '48', tmaLesson: '93', submissionType: 'Weekly Test', dueDate: '2026-08-23', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '94', tmaLesson: '139', submissionType: 'Weekly Test', dueDate: '2026-08-30', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '140', tmaLesson: '183', submissionType: 'Weekly Test', dueDate: '2026-09-06', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '184', tmaLesson: '207', submissionType: 'Weekly Test', dueDate: '2026-09-13', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '140', tmaLesson: '207', submissionType: 'Weekly Test', dueDate: '2026-09-20', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '208', tmaLesson: '251', submissionType: 'Weekly Test', dueDate: '2027-01-06', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '252', tmaLesson: '272', submissionType: 'Weekly Test', dueDate: '2027-01-13', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+
+    // Project
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '139', submissionType: 'Project', dueDate: '2026-09-11', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '140', tmaLesson: '272', submissionType: 'Project', dueDate: '2027-02-11', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // UT I - with time slots
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '40', submissionType: 'Aug 26 UT I', dueDate: '2026-08-26', status: 'pendings', driveLink: '', refLink: '', startTime: '11:00', endTime: '12:00', totalMarks: '40', marksGained: '' },
+    // Term I - with time slots
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '91', submissionType: 'Oct 26 Term I', dueDate: '2026-10-26', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '12:00', totalMarks: '80', marksGained: '' },
+    // Prelims I - with time slots
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '92', tmaLesson: '154', submissionType: 'Jan 27 Prelims I', dueDate: '2027-01-25', status: 'pendings', driveLink: '', refLink: '', startTime: '11:00', endTime: '12:00', totalMarks: '40', marksGained: '' },
+    // Term II - with time slots
+    { subject: 'Science and Technology (212)', book: 'NIOS Secondary Course', examLesson: '92', tmaLesson: '200', submissionType: 'Feb 27 Prelims II', dueDate: '2027-03-26', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '12:00', totalMarks: '80', marksGained: '' },
+
+    // Social science (213)
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '38', submissionType: 'Back Q & A', dueDate: '2026-07-27', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '39', tmaLesson: '136', submissionType: 'Back Q & A', dueDate: '2026-09-14', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '137', tmaLesson: '182', submissionType: 'Back Q & A', dueDate: '2026-11-16', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '183', tmaLesson: '220', submissionType: 'Back Q & A', dueDate: '2027-02-15', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // Social science (213) Doubts    
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '38', submissionType: 'Doubts', dueDate: '2026-07-22', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '39', tmaLesson: '136', submissionType: 'Doubts', dueDate: '2026-09-10', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '137', tmaLesson: '182', submissionType: 'Doubts', dueDate: '2027-11-12', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '183', tmaLesson: '220', submissionType: 'Doubts', dueDate: '2027-02-11', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+                            
+    // Social science (213) Work sheet        
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '38', submissionType: 'Work Sheet', dueDate: '2026-07-18', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '39', tmaLesson: '136', submissionType: 'Work Sheet', dueDate: '2026-07-25', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '137', tmaLesson: '182', submissionType: 'Work Sheet', dueDate: '2026-09-18', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '183', tmaLesson: '220', submissionType: 'Work Sheet', dueDate: '2026-09-25', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // Weekly Test - with time slots
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '12', submissionType: 'Weekly Test', dueDate: '2026-07-19', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '13', tmaLesson: '38', submissionType: 'Weekly Test', dueDate: '2026-08-09', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '16' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '38', submissionType: 'Weekly Test', dueDate: '2026-08-16', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },            
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '39', tmaLesson: '94', submissionType: 'Weekly Test', dueDate: '2026-08-23', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '95', tmaLesson: '136', submissionType: 'Weekly Test', dueDate: '2026-08-30', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '137', tmaLesson: '160', submissionType: 'Weekly Test', dueDate: '2026-09-06', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '161', tmaLesson: '182', submissionType: 'Weekly Test', dueDate: '2026-09-13', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '137', tmaLesson: '182', submissionType: 'Weekly Test', dueDate: '2026-09-20', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '183', tmaLesson: '194', submissionType: 'Weekly Test', dueDate: '2027-01-06', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '195', tmaLesson: '220', submissionType: 'Weekly Test', dueDate: '2027-01-13', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '10:30', totalMarks: '20', marksGained: '' },
+
+    // Project
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '136', submissionType: 'Project', dueDate: '2026-09-13', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '137', tmaLesson: '220', submissionType: 'Project', dueDate: '2027-02-13', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
+
+    // UT I - with time slots
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '40', submissionType: 'Aug 26 UT I', dueDate: '2026-08-28', status: 'pendings', driveLink: '', refLink: '', startTime: '11:00', endTime: '12:00', totalMarks: '40', marksGained: '' },
+    // Term I - with time slots
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '1', tmaLesson: '91', submissionType: 'Oct 26 Term I', dueDate: '2026-10-28', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '12:00', totalMarks: '80', marksGained: '' },
+    // Prelims I - with time slots
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '92', tmaLesson: '154', submissionType: 'Jan 27 UT II', dueDate: '2027-01-28', status: 'pendings', driveLink: '', refLink: '', startTime: '11:00', endTime: '12:00', totalMarks: '40', marksGained: '' },
+    // Term II - with time slots
+    { subject: 'Social science (213)', book: 'NIOS Secondary Course', examLesson: '92', tmaLesson: '200', submissionType: 'Feb 27 Prelims II', dueDate: '2027-03-29', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '12:00', totalMarks: '80', marksGained: '' }
+];
+
+       // ================================================================
+        // TIMETABLE DATA
+        // ================================================================
+        const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        const timeSlots = [
+            { start: '9:30', end: '10:30', label: '9:30 - 10:30' },
+            { start: '10:30', end: '11:00', label: '10:30 - 11:00', break: true, breakType: 'Short Break' },
+            { start: '11:00', end: '12:00', label: '11:00 - 12:00' },
+            { start: '12:00', end: '1:00', label: '12:00 - 1:00' },
+            { start: '1:00', end: '3:00', label: '1:00 - 3:00', break: true, breakType: 'Lunch Break' },
+            { start: '3:00', end: '4:00', label: '3:00 - 4:00' },
+            { start: '4:00', end: '5:00', label: '4:00 - 5:00' },
+            { start: '5:00', end: '5:30', label: '5:00 - 5:30' }
+        ];
+
+        // ================================================================
+        // HELPER FUNCTIONS
+        // ================================================================
+        function isOverdue(dueDate) {
+            if (!dueDate || dueDate === '2026-0-0' || dueDate === '2027-0-0') return false;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const due = new Date(dueDate);
+            due.setHours(0, 0, 0, 0);
+            return today > due;
+        }
+
+        function hasTimeColumns(submissionType) {
+            const timeTypes = ['Weekly Test', 'Aug 26 UT I', 'Oct 26 Term I', 'Jan 27 Prelims I', 'Feb 27 Prelims II'];
+            return timeTypes.includes(submissionType);
+        }
+
+        function getTimeStatus(startTime, endTime, dueDate) {
+            if (!startTime || !endTime || !dueDate) return 'none';
+            
+            const now = new Date();
+            const due = new Date(dueDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            due.setHours(0, 0, 0, 0);
+            
+            if (due.getTime() < today.getTime()) return 'expired';
+            if (due.getTime() > today.getTime()) return 'none';
+            
+            const [startHour, startMin] = startTime.split(':').map(Number);
+            const [endHour, endMin] = endTime.split(':').map(Number);
+            
+            const startDateTime = new Date();
+            startDateTime.setHours(startHour, startMin, 0, 0);
+            const endDateTime = new Date();
+            endDateTime.setHours(endHour, endMin, 0, 0);
+            
+            if (now >= startDateTime && now <= endDateTime) return 'active';
+            if (now > endDateTime) return 'expired';
+            return 'none';
+        }
+
+
+        function getSubjectForSlot(day, slotIndex) {
+            const daySubjects = {
+                'Monday': { 0: 'English(202)', 2: 'Mathematics (211)', 3: 'Social science (213)', 5: 'Mathematics (211)', 6: 'English(202)', 7: 'Social science (213)' },
+                'Tuesday': { 0: 'Hindi (201)', 2: 'Mathematics (211)', 3: 'Science and Technology (212)', 5: 'Hindi (201)', 6: 'Mathematics (211)', 7: 'Social science (213)' },
+                'Wednesday': { 0: 'English(202)', 2: 'Mathematics (211)', 3: 'Social science (213)', 5: 'PT', 6: 'Mathematics (211)', 7: 'English(202)' },
+                'Thursday': { 0: 'Hindi (201)', 2: 'Mathematics (211)', 3: 'Science and Technology (212)', 5: 'Hindi (201)', 6: 'Mathematics (211)', 7: 'Social science (213)' },
+                'Friday': { 0: 'English(202)', 2: 'Mathematics (211)', 3: 'Social science (213)', 5: 'Mathematics (211)', 6: 'English', 7: 'Social science (213)' }
+            };
+            return daySubjects[day] ? daySubjects[day][slotIndex] || null : null;
+        }
+
+        // ================================================================
+        // RENDER FUNCTIONS
+        // ================================================================
+        function renderWeeklyTimetable() {
+            const container = document.getElementById('weeklyTimetable');
+            if (!container) return;
+
+            let html = '<table><thead><tr><th>Time</th>';
+            weekDays.forEach(day => { html += `<th>${day}</th>`; });
+            html += '</tr></thead><tbody>';
+
+            timeSlots.forEach((slot, slotIndex) => {
+                html += '<tr>';
+                html += `<td class="time-col">${slot.label}</td>`;
+                weekDays.forEach(day => {
+                    if (slot.break) {
+                        const breakLabel = slot.breakType || 'Break';
+                        const breakClass = slot.breakType === 'Lunch Break' ? 'lunch-cell' : 'break-cell';
+                        html += `<td class="subject-cell ${breakClass}"><i class="fas fa-utensils"></i> ${breakLabel}</td>`;
+                    } else {
+                        const subject = getSubjectForSlot(day, slotIndex);
+                        if (subject) {
+                            const subjectClass = subject.toLowerCase().replace(' ', '-');
+                            const iconMap = { 'english': 'fa-language', 'hindi': 'fa-font', 'mathematics': 'fa-calculator', 'science': 'fa-flask', 'social-science': 'fa-globe-asia', 'pt': 'fa-running' };
+                            const icon = iconMap[subjectClass] || 'fa-book';
+                            html += `<td class="subject-cell ${subjectClass}"><i class="fas ${icon} sub-icon"></i><span class="sub-name">${subject}</span></td>`;
+                        } else {
+                            html += `<td class="subject-cell" style="background:#f5f5f5;color:#aaa;">—</td>`;
+                        }
+                    }
+                });
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function renderSubjectCards() {
+            const grid = document.getElementById('timetableGrid');
+            if (!grid) return;
+
+            const subjectList = [
+                { key: 'English(202)', icon: 'english', book: 'NIOS Secondary Course ', days: ['Monday', 'Wednesday', 'Friday'] },
+                { key: 'Hindi (201)', icon: 'hindi', book: 'NIOS Secondary Course', days: ['Tuesday', 'Thursday'] },
+                { key: 'Mathematics (211)', icon: 'maths', book: 'NIOS Secondary Course', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] },
+                { key: 'Science and Technology (212)', icon: 'science', book: 'NIOS Secondary Course', days: ['Tuesday', 'Thursday'] },
+                { key: 'Social science (213)', icon: 'social-science', book: 'NIOS Secondary Course', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] },
+                { key: 'PT', icon: 'pt', book: 'Physical Education', days: ['Wednesday'] }
+            ];
+
+            const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+            grid.innerHTML = '';
+
+            subjectList.forEach(subject => {
+                const card = document.createElement('div');
+                card.className = 'timetable-card';
+
+                let scheduleHTML = '';
+                subject.days.forEach(day => {
+                    let status = 'upcoming';
+                    if (day === today) {
+                        const now = new Date();
+                        const currentHour = now.getHours();
+                        if (currentHour >= 9 && currentHour < 17) status = 'ongoing';
+                        else if (currentHour >= 17) status = 'completed';
+                    } else {
+                        const dayIndex = weekDays.indexOf(day);
+                        const todayIndex = weekDays.indexOf(today);
+                        if (todayIndex > dayIndex) status = 'completed';
+                    }
+
+                    const statusMap = {
+                        'ongoing': '<span class="status-badge ongoing"><i class="fas fa-play-circle"></i> Ongoing</span>',
+                        'upcoming': '<span class="status-badge upcoming"><i class="fas fa-clock"></i> Upcoming</span>',
+                        'completed': '<span class="status-badge completed"><i class="fas fa-check-circle"></i> Completed</span>'
+                    };
+                    const statusBadge = statusMap[status] || statusMap.upcoming;
+
+                    scheduleHTML += `
+                        <div class="schedule-item">
+                            <i class="fas fa-calendar-day"></i>
+                            <span class="day">${day}</span>
+                            <span class="time">1 hour</span>
+                            ${statusBadge}
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="subject-header">
+                        <div class="subject-icon ${subject.icon}"><i class="fas fa-book"></i></div>
+                        <div>
+                            <div class="subject-name">${subject.key}</div>
+                            <div class="subject-book">${subject.book}</div>
+                        </div>
+                    </div>
+                    ${scheduleHTML}
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // ---------- PASSWORD TOGGLE ----------
+        const toggleBtn = document.getElementById('togglePasswordBtn');
+        const passwordInput = document.getElementById('loginPass');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+            passwordInput.focus();
+        });
+
+        // ---------- ELEMENTS ----------
+        const loginBtn = document.getElementById('loginBtn');
+        const loginId = document.getElementById('loginId');
+        const loginError = document.getElementById('loginError');
+        const loggedInSection = document.getElementById('loggedInContent');
+        const loginPanel = document.getElementById('loginPanel');
+        const ageDisplay = document.getElementById('ageDisplay');
+        const profilePhoto = document.getElementById('profilePhotoContainer');
+        const photoWarning = document.getElementById('photoWarning');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const statusBody = document.getElementById('statusTableBody');
+        const filterLabel = document.getElementById('filterLabel');
+        const subjectTabsContainer = document.getElementById('subjectTabs');
+        const filterButtonsContainer = document.getElementById('filterButtons');
+        const subjectBadgesContainer = document.getElementById('subjectBadgesContainer');
+        
+        const dateFilterFrom = document.getElementById('dateFilterFrom');
+        const dateFilterTo = document.getElementById('dateFilterTo');
+        const applyDateFilter = document.getElementById('applyDateFilter');
+        const resetDateFilter = document.getElementById('resetDateFilter');
+
+        let currentSubjectFilter = 'all';
+        let currentTypeFilter = 'all';
+        let currentDateFrom = '';
+        let currentDateTo = '';
+
+        // ---------- AGE CALCULATION ----------
+        function calculateAge() {
+            const dob = new Date(2012, 2, 25);
+            const now = new Date();
+            let years = now.getFullYear() - dob.getFullYear();
+            let months = now.getMonth() - dob.getMonth();
+            let days = now.getDate() - dob.getDate();
+            let hours = now.getHours();
+            let seconds = now.getSeconds();
+
+            if (days < 0) { months--; const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); days += prevMonth.getDate(); }
+            if (months < 0) { years--; months += 12; }
+            return `${years} Years ${months} Months ${days} Days ${hours} Hours ${seconds} Seconds`;
+        }
+
+        function updateAge() {
+            if (ageDisplay) ageDisplay.textContent = calculateAge();
+        }
+
+        // ---------- GET UNIQUE SUBJECTS ----------
+        function getUniqueSubjects() {
+            const subjects = tableData.map(row => row.subject);
+            return [...new Set(subjects)];
+        }
+
+        // ---------- GENERATE SUBJECT TABS ----------
+        function generateSubjectTabs() {
+            const subjects = getUniqueSubjects();
+            subjectTabsContainer.innerHTML = '';
+            
+            const allTab = document.createElement('button');
+            allTab.className = 'subject-tab active';
+            allTab.dataset.subject = 'all';
+            allTab.innerHTML = '<i class="fas fa-th-list"></i> All Subjects';
+            subjectTabsContainer.appendChild(allTab);
+
+            subjects.forEach(subject => {
+                const tab = document.createElement('button');
+                tab.className = 'subject-tab';
+                tab.dataset.subject = subject;
+                tab.innerHTML = `<i class="fas fa-book"></i> ${subject}`;
+                subjectTabsContainer.appendChild(tab);
+            });
+        }
+
+        // ---------- GENERATE TYPE FILTER BUTTONS ----------
+        function generateTypeFilters() {
+            const submissionTypes = ['Back Q & A', 'Doubts', 'Work Sheet', 'Weekly Test', 'Project', 'Aug 26 UT I', 'Oct 26 Term I', 'Jan 27 Prelims I', 'Feb 27 Prelims II'];
+            filterButtonsContainer.innerHTML = '';
+            
+            const allBtn = document.createElement('button');
+            allBtn.className = 'filter-btn active';
+            allBtn.dataset.type = 'all';
+            allBtn.innerHTML = '<i class="fas fa-th-list"></i> All Types';
+            filterButtonsContainer.appendChild(allBtn);
+
+            submissionTypes.forEach(type => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.dataset.type = type;
+                btn.textContent = type;
+                filterButtonsContainer.appendChild(btn);
+            });
+        }
+
+        // ---------- GENERATE SUBJECT BADGES ----------
+        function generateSubjectBadges() {
+            const subjects = getUniqueSubjects();
+            subjectBadgesContainer.innerHTML = '';
+            
+            const allBadge = document.createElement('span');
+            allBadge.className = 'subject-badge subject-badge-all active';
+            allBadge.dataset.filter = 'all';
+            allBadge.textContent = 'All Subjects';
+            subjectBadgesContainer.appendChild(allBadge);
+
+            subjects.forEach(subject => {
+                const badge = document.createElement('span');
+                badge.className = 'subject-badge';
+                badge.dataset.filter = subject;
+                badge.textContent = subject;
+                subjectBadgesContainer.appendChild(badge);
+            });
+        }
+
+        // ================================================================
+        // RENDER STATUS TABLE - UPDATED: Allows rejected to resubmit
+        // ================================================================
+        function renderStatusTable() {
+            statusBody.innerHTML = '';
+            
+            let filteredData = tableData;
+            
+            // ===== HIDE ROWS WITH INVALID/UNDEFINED STATUS =====
+            filteredData = filteredData.filter(item => {
+                // Only keep rows with valid status: pending, rejected, submitted, approved
+                const validStatuses = ['pending', 'rejected', 'submitted', 'approved'];
+                return item.status && validStatuses.includes(item.status.toLowerCase());
+            });
+            
+            if (currentSubjectFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.subject === currentSubjectFilter);
+            }
+            if (currentTypeFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.submissionType === currentTypeFilter);
+            }
+            if (currentDateFrom) {
+                filteredData = filteredData.filter(item => item.dueDate >= currentDateFrom);
+            }
+            if (currentDateTo) {
+                filteredData = filteredData.filter(item => item.dueDate <= currentDateTo);
+            }
+            
+            if (filteredData.length === 0) {
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.colSpan = 13;
+                td.style.textAlign = 'center';
+                td.style.padding = '30px';
+                td.style.color = '#5a6f88';
+                td.innerHTML = '<i class="fas fa-info-circle"></i> No submissions found.';
+                tr.appendChild(td);
+                statusBody.appendChild(tr);
+                return;
+            }
+
+            filteredData.forEach((item) => {
+                const tr = document.createElement('tr');
+                
+                const hasTime = hasTimeColumns(item.submissionType);
+                const isOverdueStatus = isOverdue(item.dueDate);
+                const timeStatus = (hasTime && item.startTime && item.endTime) ? getTimeStatus(item.startTime, item.endTime, item.dueDate) : 'none';
+                
+                let displayStatus = item.status;
+                let statusClass = item.status;
+                let isTimeActive = false;
+                let isTimeExpired = false;
+                let isOverdueDisplay = false;
+
+                // If the due date has passed, show as Overdue for pending or rejected
+                if (isOverdueStatus) {
+                    if (item.status === 'pending') {
+                        displayStatus = 'Overdue';
+                        statusClass = 'time-expired';
+                        isOverdueDisplay = true;
+                    } else if (item.status === 'rejected') {
+                        displayStatus = 'Rejected (Overdue)';
+                        statusClass = 'rejected';
+                        isOverdueDisplay = true;
+                    }
+                }
+                // Check for time-based submissions (only for pending, not overdue)
+                else if (hasTime && item.startTime && item.endTime && item.status === 'pending' && !isOverdueStatus) {
+                    if (timeStatus === 'active') {
+                        displayStatus = 'Active';
+                        statusClass = 'time-active';
+                        isTimeActive = true;
+                    } else if (timeStatus === 'expired') {
+                        displayStatus = 'Time Expired';
+                        statusClass = 'time-expired';
+                        isTimeExpired = true;
+                    } else {
+                        displayStatus = 'Pending';
+                        statusClass = 'pending';
+                    }
+                } 
+                // Regular pending (not overdue)
+                else if (item.status === 'pending' && !isOverdueStatus) {
+                    displayStatus = 'Pending';
+                    statusClass = 'pending';
+                } 
+                else if (item.status === 'submitted') {
+                    displayStatus = 'Submitted';
+                    statusClass = 'submitted';
+                } 
+                else if (item.status === 'rejected' && !isOverdueStatus) {
+                    displayStatus = 'Rejected';
+                    statusClass = 'rejected';
+                } 
+                else if (item.status === 'approved') {
+                    displayStatus = 'Approved';
+                    statusClass = 'approved';
+                }
+
+                // Create cells with examLesson and tmaLesson
+                const cells = [
+                    { text: item.subject, className: 'subject-name-cell' },
+                    { text: item.book },
+                    { text: item.examLesson },
+                    { text: item.tmaLesson },
+                    { text: item.submissionType },
+                    { text: item.dueDate },
+                    { text: (hasTime && item.startTime) ? item.startTime : '' },
+                    { text: (hasTime && item.endTime) ? item.endTime : '' },
+                ];
+
+                cells.forEach(cell => {
+                    const td = document.createElement('td');
+                    td.textContent = cell.text || '';
+                    if (cell.className) td.className = cell.className;
+                    tr.appendChild(td);
+                });
+
+                // Total Marks column
+                const tdTotalMarks = document.createElement('td');
+                tdTotalMarks.className = 'marks-column';
+                tdTotalMarks.textContent = (hasTime && item.totalMarks) ? item.totalMarks : '';
+                tr.appendChild(tdTotalMarks);
+
+                // Marks Gained column
+                const tdMarksGained = document.createElement('td');
+                tdMarksGained.className = 'marks-column';
+                if (hasTime && item.marksGained) {
+                    tdMarksGained.innerHTML = `<span class="scored">${item.marksGained}</span>`;
+                } else {
+                    tdMarksGained.textContent = '';
+                }
+                tr.appendChild(tdMarksGained);
+
+                // Status column
+                const tdStatus = document.createElement('td');
+                const statusSpan = document.createElement('span');
+                statusSpan.className = `badge-status ${statusClass}`;
+                if (statusClass === 'time-active') {
+                    statusSpan.innerHTML = `<i class="fas fa-clock" style="margin-right:4px;"></i> Active`;
+                } else if (statusClass === 'time-expired' || isOverdueDisplay) {
+                    statusSpan.innerHTML = `<i class="fas fa-hourglass-end" style="margin-right:4px;"></i> ${displayStatus}`;
+                } else {
+                    statusSpan.textContent = displayStatus;
+                }
+                tdStatus.appendChild(statusSpan);
+                tr.appendChild(tdStatus);
+
+                // ========== ACTION COLUMN - UPDATED: Allows rejected to resubmit ==========
+                const tdAction = document.createElement('td');
+                const actionBtn = document.createElement('a');
+                actionBtn.className = 'subject-action-btn';
+
+                // Case 1: Overdue for pending OR rejected - Show Pay ₹1500 button for BOTH
+                if (isOverdueStatus && (item.status === 'pending' || item.status === 'rejected')) {
+                    actionBtn.href = '#';
+                    actionBtn.className = 'subject-action-btn overdue-pay-btn';
+                    actionBtn.innerHTML = `<i class="fas fa-credit-card"></i> Pay ₹1500 & Submit`;
+                    const statusText = item.status === 'rejected' ? 'REJECTED' : 'OVERDUE';
+                    actionBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const confirmed = confirm(
+                            `⏰ ${statusText}!\n\n` +
+                            `Subject: ${item.subject}\n` +
+                            `Type: ${item.submissionType}\n` +
+                            `Due Date: ${item.dueDate}\n` +
+                            `Status: ${item.status.toUpperCase()}\n` +
+                            (hasTime && item.startTime && item.endTime ? `Time Window: ${item.startTime} - ${item.endTime}\n` : '') +
+                            `\nA late fee of ₹1500 is required to resubmit.\n\nClick OK to pay.`
+                        );
+                        if (confirmed) {
+                            window.open(OVERDUE_PAYMENT_URL, '_blank');
+                            alert('✅ Payment link opened.');
+                        }
+                    });
+                }
+                // Case 2: Time Active - Show Submit Now button for pending OR rejected
+                else if (isTimeActive && (item.status === 'pending' || item.status === 'rejected')) {
+                    actionBtn.href = GOOGLE_FORM_URL;
+                    actionBtn.target = '_blank';
+                    actionBtn.rel = 'noopener noreferrer';
+                    actionBtn.className = 'subject-action-btn active-time-btn';
+                    actionBtn.innerHTML = `<i class="fas fa-pen"></i> Submit Now`;
+                }
+                // Case 3: Time Expired (but not overdue) - Show Pay ₹1500 button for pending OR rejected
+                else if (isTimeExpired && (item.status === 'pending' || item.status === 'rejected')) {
+                    actionBtn.href = '#';
+                    actionBtn.className = 'subject-action-btn time-expired-btn';
+                    actionBtn.innerHTML = `<i class="fas fa-credit-card"></i> Pay ₹1500 & Submit`;
+                    actionBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const confirmed = confirm(
+                            `⏰ TIME EXPIRED!\n\n` +
+                            `Subject: ${item.subject}\n` +
+                            `Type: ${item.submissionType}\n` +
+                            `Due Date: ${item.dueDate}\n` +
+                            `Status: ${item.status.toUpperCase()}\n` +
+                            (hasTime && item.startTime && item.endTime ? `Time Window: ${item.startTime} - ${item.endTime}\n` : '') +
+                            `\nA late fee of ₹1500 is required.\n\nClick OK to pay.`
+                        );
+                        if (confirmed) {
+                            window.open(OVERDUE_PAYMENT_URL, '_blank');
+                            alert('✅ Payment link opened.');
+                        }
+                    });
+                }
+                // Case 4: Regular Pending OR Rejected (not overdue, no time expired) - Show Submit button
+                else if ((item.status === 'pending' || item.status === 'rejected') && !isOverdueStatus && !isTimeExpired && !isTimeActive) {
+                    actionBtn.href = GOOGLE_FORM_URL;
+                    actionBtn.target = '_blank';
+                    actionBtn.rel = 'noopener noreferrer';
+                    actionBtn.className = 'subject-action-btn';
+                    actionBtn.innerHTML = `<i class="fas fa-pen"></i> Submit`;
+                }
+                // Case 5: Submitted - View File
+                else if (item.status === 'submitted') {
+                    const link = item.driveLink && item.driveLink.trim() !== '' ? item.driveLink : DEFAULT_DRIVE_LINK;
+                    actionBtn.href = link;
+                    actionBtn.target = '_blank';
+                    actionBtn.rel = 'noopener noreferrer';
+                    actionBtn.className = 'subject-action-btn approved-btn';
+                    actionBtn.innerHTML = `<i class="fas fa-folder-open"></i> View File`;
+                }
+                // Case 6: Approved
+                else if (item.status === 'approved') {
+                    const link = item.driveLink && item.driveLink.trim() !== '' ? item.driveLink : DEFAULT_DRIVE_LINK;
+                    actionBtn.href = link;
+                    actionBtn.target = '_blank';
+                    actionBtn.rel = 'noopener noreferrer';
+                    actionBtn.className = 'subject-action-btn approved-btn';
+                    actionBtn.innerHTML = `<i class="fas fa-folder-open"></i> View File`;
+                }
+                // Case 7: Fallback
+                else {
+                    actionBtn.href = '#';
+                    actionBtn.className = 'subject-action-btn inactive';
+                    actionBtn.innerHTML = `<i class="fas fa-info-circle"></i> No Action`;
+                    actionBtn.style.cursor = 'default';
+                }
+                tdAction.appendChild(actionBtn);
+                tr.appendChild(tdAction);
+
+                // ========== REFERENCE COLUMN ==========
+                const tdRef = document.createElement('td');
+                if (item.refLink && item.refLink.trim() !== '') {
+                    const refBtn = document.createElement('a');
+                    
+                    // Show View button for pending OR rejected regardless of overdue status
+                    if (item.status === 'pending' || item.status === 'rejected') {
+                        refBtn.className = 'ref-link-btn always-visible';
+                        refBtn.href = item.refLink;
+                        refBtn.target = '_blank';
+                        refBtn.rel = 'noopener noreferrer';
+                        refBtn.innerHTML = '<i class="fas fa-book-open"></i> View';
+                    }
+                    // For time-based submissions
+                    else if (isTimeActive && item.status === 'pending') {
+                        refBtn.className = 'ref-link-btn time-active-ref';
+                        refBtn.href = item.refLink;
+                        refBtn.target = '_blank';
+                        refBtn.rel = 'noopener noreferrer';
+                        refBtn.innerHTML = '<i class="fas fa-book-open"></i> View';
+                    }
+                    else if (item.status === 'approved' || item.status === 'submitted') {
+                        refBtn.className = 'ref-link-btn always-visible';
+                        refBtn.href = item.refLink;
+                        refBtn.target = '_blank';
+                        refBtn.rel = 'noopener noreferrer';
+                        refBtn.innerHTML = '<i class="fas fa-book-open"></i> View';
+                    }
+                    else {
+                        refBtn.className = 'ref-link-btn inactive';
+                        refBtn.href = '#';
+                        refBtn.innerHTML = '<i class="fas fa-ban"></i> No Access';
+                        refBtn.style.cursor = 'default';
+                        refBtn.style.pointerEvents = 'none';
+                        refBtn.style.opacity = '0.4';
+                    }
+                    tdRef.appendChild(refBtn);
+                } else {
+                    tdRef.textContent = '—';
+                    tdRef.style.color = '#aaa';
+                    tdRef.style.fontSize = '0.8rem';
+                }
+                tr.appendChild(tdRef);
+                
+                statusBody.appendChild(tr);
+            });
+        }
+
+        // ---------- UPDATE FILTER LABEL ----------
+        function updateFilterLabel() {
+            let label = 'All Subjects & Types';
+            if (currentSubjectFilter !== 'all' || currentTypeFilter !== 'all' || currentDateFrom || currentDateTo) {
+                const parts = [];
+                if (currentSubjectFilter !== 'all') parts.push(currentSubjectFilter);
+                if (currentTypeFilter !== 'all') parts.push(currentTypeFilter);
+                if (currentDateFrom || currentDateTo) {
+                    let dateRange = '';
+                    if (currentDateFrom && currentDateTo) dateRange = `${currentDateFrom} to ${currentDateTo}`;
+                    else if (currentDateFrom) dateRange = `from ${currentDateFrom}`;
+                    else if (currentDateTo) dateRange = `until ${currentDateTo}`;
+                    parts.push(`Due: ${dateRange}`);
+                }
+                label = parts.join(' - ');
+            }
+            filterLabel.textContent = `(Showing: ${label})`;
+        }
+
+        // ---------- SET FILTERS ----------
+        function setSubjectFilter(subject) {
+            currentSubjectFilter = subject;
+            document.querySelectorAll('.subject-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.subject === subject);
+            });
+            document.querySelectorAll('.subject-badge').forEach(badge => {
+                badge.classList.toggle('active', badge.dataset.filter === subject);
+            });
+            updateFilterLabel();
+            renderStatusTable();
+        }
+
+        function setTypeFilter(type) {
+            currentTypeFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === type);
+            });
+            updateFilterLabel();
+            renderStatusTable();
+        }
+
+        function setDateFilter(from, to) {
+            currentDateFrom = from;
+            currentDateTo = to;
+            updateFilterLabel();
+            renderStatusTable();
+        }
+
+        // ---------- SETUP EVENT LISTENERS ----------
+        function setupEventListeners() {
+            document.querySelectorAll('.subject-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    setSubjectFilter(this.dataset.subject);
+                });
+            });
+
+            document.querySelectorAll('.subject-badge').forEach(badge => {
+                badge.addEventListener('click', function() {
+                    setSubjectFilter(this.dataset.filter);
+                });
+            });
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    setTypeFilter(this.dataset.type);
+                });
+            });
+
+            applyDateFilter.addEventListener('click', function() {
+                setDateFilter(dateFilterFrom.value, dateFilterTo.value);
+            });
+
+            resetDateFilter.addEventListener('click', function() {
+                dateFilterFrom.value = '';
+                dateFilterTo.value = '';
+                setDateFilter('', '');
+            });
+
+            dateFilterFrom.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') applyDateFilter.click();
+            });
+            dateFilterTo.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') applyDateFilter.click();
+            });
+        }
+
+        // ---------- LOGIN ----------
+        loginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = loginId.value.trim();
+            const pass = passwordInput.value.trim();
+            if (id === 'Tarini123' && pass === 'Tarini@123') {
+                loginError.textContent = '';
+                loginPanel.style.display = 'none';
+                loggedInSection.style.display = 'block';
+                profilePhoto.classList.add('visible');
+                photoWarning.classList.add('visible');
+                logoutBtn.classList.add('visible');
+                updateAge();
+                
+                generateSubjectTabs();
+                generateTypeFilters();
+                generateSubjectBadges();
+                renderWeeklyTimetable();
+                renderSubjectCards();
+                setSubjectFilter('all');
+                setTypeFilter('all');
+                setupEventListeners();
+                
+                if (window.ageInterval) clearInterval(window.ageInterval);
+                window.ageInterval = setInterval(updateAge, 1000);
+                
+                if (window.tableRefreshInterval) clearInterval(window.tableRefreshInterval);
+                window.tableRefreshInterval = setInterval(renderStatusTable, 30000);
+            } else {
+                loginError.textContent = '❌ Invalid Login ID or Password. Try again.';
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && loginPanel.style.display !== 'none') {
+                loginBtn.click();
+            }
+        });
+
+        // ---------- LOGOUT ----------
+        logoutBtn.addEventListener('click', function() {
+            loggedInSection.style.display = 'none';
+            loginPanel.style.display = 'flex';
+            profilePhoto.classList.remove('visible');
+            photoWarning.classList.remove('visible');
+            logoutBtn.classList.remove('visible');
+            loginId.value = '';
+            passwordInput.value = '';
+            loginError.textContent = '';
+            passwordInput.type = 'password';
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+            if (window.ageInterval) {
+                clearInterval(window.ageInterval);
+                window.ageInterval = null;
+            }
+            if (window.tableRefreshInterval) {
+                clearInterval(window.tableRefreshInterval);
+                window.tableRefreshInterval = null;
+            }
+        });
+
+        // ---------- INITIAL STATE ----------
+        loggedInSection.style.display = 'none';
+        profilePhoto.classList.remove('visible');
+        photoWarning.classList.remove('visible');
+        logoutBtn.classList.remove('visible');
+
+        console.log('✅ Dashboard ready. Credentials: Tarini123 / Tarini@123');
+        console.log('📊 Total rows: ' + tableData.length);
+        console.log('📊 Updated Status behavior:');
+        console.log('  - Pending + Overdue: Show Pay ₹1500 button, Reference: View');
+        console.log('  - Rejected + Overdue: Show Pay ₹1500 button, Reference: View');
+        console.log('  - Pending + Not Overdue: Show Submit button + Reference: View');
+        console.log('  - Rejected + Not Overdue: Show Submit button + Reference: View');
+        console.log('  - Time Active: Show Submit Now button + Reference: View');
+        console.log('  - Time Expired: Show Pay ₹1500 button, Reference: View');
+        console.log('  - Submitted: Show View File button + Reference: View');
+        console.log('  - Approved: Show View File button + Reference: View');
+    })();
+</script>
+</body>
+</html>
