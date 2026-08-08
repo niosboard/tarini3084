@@ -1256,7 +1256,7 @@
     { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '137', tmaLesson: '258', submissionType: 'Project', dueDate: '2027-02-05', status: 'pendings', driveLink: '', refLink: '', startTime: '', endTime: '', totalMarks: '', marksGained: '' },
 
     // UT I - with time slots
-    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '1', tmaLesson: '68', submissionType: 'Aug 26 UT I', dueDate: '2026-08-20', status: 'pendings', driveLink: '', refLink: '', startTime: '11:00', endTime: '12:00', totalMarks: '40', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: 'L1, L3, L5, L6, L8, L9, L12, L13, L14, L16', tmaLesson: 'None', submissionType: 'UT I', dueDate: '2026-08-20', status: 'pending', driveLink: '', refLink: '', startTime: '15:00', endTime: '18:00', totalMarks: '100', marksGained: '' },
     // Term I - with time slots
     { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: '1', tmaLesson: '136', submissionType: 'Oct 26 Term I', dueDate: '2026-10-20', status: 'pendings', driveLink: '', refLink: '', startTime: '09:30', endTime: '12:00', totalMarks: '80', marksGained: '65' },
     // Prelims I - with time slots
@@ -1702,7 +1702,7 @@
 
         // ---------- GENERATE TYPE FILTER BUTTONS ----------
         function generateTypeFilters() {
-            const submissionTypes = ['Back Q & A', 'Doubts', 'Work Sheet', 'Weekly Test', 'Project', 'Aug 26 UT I', 'Oct 26 Term I', 'Jan 27 Prelims I', 'Feb 27 Prelims II'];
+            const submissionTypes = ['Back Q & A', 'Doubts', 'Work Sheet', 'Weekly Test', 'Project', 'UT I', 'Oct 26 Term I', 'Jan 27 Prelims I', 'Feb 27 Prelims II'];
             filterButtonsContainer.innerHTML = '';
             
             const allBtn = document.createElement('button');
