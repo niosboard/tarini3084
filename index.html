@@ -1239,7 +1239,7 @@
         // ================================================================
         const tableData = [
     // English(202) Back Q & A
-    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: 'Read L1 then Learn & Submit- Intext 1.1, 1.2, 1.3', tmaLesson: 'None', submissionType: 'Back Q & A', dueDate: '2026-09-05', status: 'pending', driveLink: '', refLink: 'https://nios.ac.in/media/documents/Secengcour/book1/L_1.pdf', startTime: '01:00', endTime: '23:59', totalMarks: '10', marksGained: '' },
+    { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: 'Read L1 then Learn & Submit- Intext 1.1, 1.2, 1.3', tmaLesson: 'None', submissionType: 'Back Q & A', dueDate: '2026-08-05', status: 'pending', driveLink: '', refLink: 'https://nios.ac.in/media/documents/Secengcour/book1/L_1.pdf', startTime: '01:00', endTime: '23:59', totalMarks: '10', marksGained: '' },
     { subject: 'English(202)', book: 'NIOS Secondary Course ', examLesson: 'Read L1 then Learn & Submit- Terminal Qts', tmaLesson: 'None', submissionType: 'Back Q & A', dueDate: '2026-09-07', status: 'pending', driveLink: '', refLink: 'https://nios.ac.in/media/documents/Secengcour/book1/L_1.pdf', startTime: '01:00', endTime: '23:59', totalMarks: '10', marksGained: '' },
 
             
@@ -1922,11 +1922,11 @@
                 const actionBtn = document.createElement('a');
                 actionBtn.className = 'subject-action-btn';
 
-                // Case 1: Overdue for pending OR rejected - Show Pay ₹1500 button for BOTH
+                // Case 1: Overdue for pending OR rejected - Show Pay ₹10 button for BOTH
                 if (isOverdueStatus && (item.status === 'pending' || item.status === 'rejected')) {
                     actionBtn.href = '#';
                     actionBtn.className = 'subject-action-btn overdue-pay-btn';
-                    actionBtn.innerHTML = `<i class="fas fa-credit-card"></i> Pay ₹1500 & Submit`;
+                    actionBtn.innerHTML = `<i class="fas fa-credit-card"></i> Pay ₹10 & Submit`;
                     const statusText = item.status === 'rejected' ? 'REJECTED' : 'OVERDUE';
                     actionBtn.addEventListener('click', function(e) {
                         e.preventDefault();
@@ -1937,7 +1937,7 @@
                             `Due Date: ${item.dueDate}\n` +
                             `Status: ${item.status.toUpperCase()}\n` +
                             (hasTime && item.startTime && item.endTime ? `Time Window: ${item.startTime} - ${item.endTime}\n` : '') +
-                            `\nA late fee of ₹1500 is required to resubmit.\n\nClick OK to pay.`
+                            `\nA late fee of ₹10 is required to resubmit.\n\nClick OK to pay.`
                         );
                         if (confirmed) {
                             window.open(OVERDUE_PAYMENT_URL, '_blank');
@@ -1953,11 +1953,11 @@
                     actionBtn.className = 'subject-action-btn active-time-btn';
                     actionBtn.innerHTML = `<i class="fas fa-pen"></i> Submit Now`;
                 }
-                // Case 3: Time Expired (but not overdue) - Show Pay ₹1500 button for pending OR rejected
+                // Case 3: Time Expired (but not overdue) - Show Pay ₹10 button for pending OR rejected
                 else if (isTimeExpired && (item.status === 'pending' || item.status === 'rejected')) {
                     actionBtn.href = '#';
                     actionBtn.className = 'subject-action-btn time-expired-btn';
-                    actionBtn.innerHTML = `<i class="fas fa-credit-card"></i> Pay ₹1500 & Submit`;
+                    actionBtn.innerHTML = `<i class="fas fa-credit-card"></i> Pay ₹10 & Submit`;
                     actionBtn.addEventListener('click', function(e) {
                         e.preventDefault();
                         const confirmed = confirm(
@@ -1967,7 +1967,7 @@
                             `Due Date: ${item.dueDate}\n` +
                             `Status: ${item.status.toUpperCase()}\n` +
                             (hasTime && item.startTime && item.endTime ? `Time Window: ${item.startTime} - ${item.endTime}\n` : '') +
-                            `\nA late fee of ₹1500 is required.\n\nClick OK to pay.`
+                            `\nA late fee of ₹10 is required.\n\nClick OK to pay.`
                         );
                         if (confirmed) {
                             window.open(OVERDUE_PAYMENT_URL, '_blank');
@@ -2219,12 +2219,12 @@
         console.log('✅ Dashboard ready. Credentials: Tarini123 / Tarini@123');
         console.log('📊 Total rows: ' + tableData.length);
         console.log('📊 Updated Status behavior:');
-        console.log('  - Pending + Overdue: Show Pay ₹1500 button, Reference: View');
-        console.log('  - Rejected + Overdue: Show Pay ₹1500 button, Reference: View');
+        console.log('  - Pending + Overdue: Show Pay ₹10 button, Reference: View');
+        console.log('  - Rejected + Overdue: Show Pay ₹10 button, Reference: View');
         console.log('  - Pending + Not Overdue: Show Submit button + Reference: View');
         console.log('  - Rejected + Not Overdue: Show Submit button + Reference: View');
         console.log('  - Time Active: Show Submit Now button + Reference: View');
-        console.log('  - Time Expired: Show Pay ₹1500 button, Reference: View');
+        console.log('  - Time Expired: Show Pay ₹10 button, Reference: View');
         console.log('  - Submitted: Show View File button + Reference: View');
         console.log('  - Approved: Show View File button + Reference: View');
     })();
